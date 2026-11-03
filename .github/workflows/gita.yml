@@ -1,31 +1,13 @@
-name: Daily Gita
-
-on:
-  schedule:
-    - cron: "30 0 * * *"   # 6:00 AM IST
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  send:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install requests
       - run: python gita_daily.py
         env:
           GITA_CHANNEL: telegram
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       - name: Save log
         run: |
           git config user.name "gita-bot"
           git config user.email "gita-bot@users.noreply.github.com"
-             git add gita_log.csv gita_progress.txt
+          git add gita_log.csv gita_progress.txt
           git commit -m "Log $(date -u +%F)" || exit 0
           git push
